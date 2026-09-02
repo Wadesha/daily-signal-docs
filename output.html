@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>最终输出 — The Daily Signal</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">DS<span>|TECH-DOC</span></a>
+  <div class="nav-links">
+    <a href="index.html">概览</a>
+    <a href="data-flow.html">数据流</a>
+    <a href="scoring.html">评分逻辑</a>
+    <a href="case-study.html">案例</a>
+    <a href="output.html" class="active">输出</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="index.html">首页</a> / 最终输出
+    </div>
+
+    <h1 class="section-title">最终输出</h1>
+    <p class="section-subtitle">Daily Signal 的标准输出格式 — 2026-09-02 案例</p>
+
+    <!-- The Email -->
+    <section class="mt-4">
+      <div class="card" style="background:var(--bg-secondary);border:1px solid var(--border-light);max-width:680px;margin:0 auto;">
+
+        <!-- Header -->
+        <div style="text-align:center;padding-bottom:1.5rem;border-bottom:1px solid var(--border-color);margin-bottom:1.5rem;">
+          <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);letter-spacing:1px;margin-bottom:0.3rem;">DAILY DISPATCH</div>
+          <div style="font-family:var(--font-mono);font-size:1.5rem;font-weight:700;color:var(--accent-cyan);letter-spacing:1px;">THE DAILY SIGNAL</div>
+          <div style="font-family:var(--font-mono);font-size:0.8rem;color:var(--text-muted);margin-top:0.3rem;">
+            0930 ET · 2026-09-02
+          </div>
+        </div>
+
+        <!-- Signal 1 -->
+        <div class="signal-card signal-1">
+          <div class="signal-meta">
+            <span class="sev high">01SEV HIGH</span>
+            <span class="conf high">HIGH CONF</span>
+            <span class="score">0.86</span>
+          </div>
+          <h3>Naval activity concentrates along a contested transit corridor</h3>
+          <div class="signal-desc">
+            Three independent shipping trackers show a sustained deviation in commercial routing over 36 hours, consistent with an unannounced exercise closure. War risk premiums have doubled; one carrier group has deferred its port call.
+          </div>
+          <div class="signal-footer">
+            <span>6 sources</span>
+            <span>·</span>
+            <span>Reliability B2</span>
+          </div>
+        </div>
+
+        <!-- Signal 2 -->
+        <div class="signal-card signal-2">
+          <div class="signal-meta">
+            <span class="sev moderate">02SEV MODERATE</span>
+            <span class="conf moderate">MODERATE CONF</span>
+            <span class="score">0.71</span>
+          </div>
+          <h3>Export-licensing regime tightened on a critical mineral class</h3>
+          <div class="signal-desc">
+            Ministry notice published without the customary consultation window. Two downstream manufacturers have already flagged supply exposure in filings.
+          </div>
+          <div class="signal-footer">
+            <span>4 sources</span>
+            <span>·</span>
+            <span>Reliability B3</span>
+          </div>
+        </div>
+
+        <!-- Signal 3 -->
+        <div class="signal-card signal-3">
+          <div class="signal-meta">
+            <span class="sev low">03SEV LOW</span>
+            <span class="conf low">LOW CONF</span>
+            <span class="score">0.64</span>
+          </div>
+          <h3>Central bank signals an earlier policy move than guided</h3>
+          <div class="signal-desc">
+            Language shift across two speeches in one week. Rate futures have repriced; no official revision to the published schedule yet.
+          </div>
+          <div class="signal-footer">
+            <span>5 sources</span>
+            <span>·</span>
+            <span>Reliability A2</span>
+          </div>
+        </div>
+
+        <!-- Assessment -->
+        <div class="assessment-box">
+          <h3>ASSESSMENT</h3>
+          <p>Two of this morning's three items point the same direction: supply routes and supply inputs are both being managed politically rather than commercially. Treat the mineral notice as the leading indicator — it is the one with a published paper trail, and the one downstream firms have already priced.</p>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align:center;padding-top:1.5rem;border-top:1px solid var(--border-color);margin-top:1.5rem;">
+          <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.6;">
+            Sample to represent format only — not real intelligence.<br>
+            <a href="#" style="color:var(--accent-cyan);text-decoration:none;">Unsubscribe</a>
+            <span style="margin:0 0.5rem;">·</span>
+            <a href="#" style="color:var(--accent-cyan);text-decoration:none;">Privacy Policy</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Output Format Specification -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">输出格式规范</h2>
+
+      <div class="info-grid mt-2">
+        <div class="info-item">
+          <div class="label">发送时间</div>
+          <div class="value mono">09:30 ET</div>
+          <div class="desc">在决策者开始一天工作前送达</div>
+        </div>
+        <div class="info-item">
+          <div class="label">发送频率</div>
+          <div class="value mono">Daily</div>
+          <div class="desc">交易日每天推送，周末无休</div>
+        </div>
+        <div class="info-item">
+          <div class="label">渠道</div>
+          <div class="value mono">Email</div>
+          <div class="desc">订阅制邮件列表，支持一键退订</div>
+        </div>
+        <div class="info-item">
+          <div class="label">内容结构</div>
+          <div class="value mono">3 Signals + 1 Assessment</div>
+          <div class="desc">固定格式，不可定制</div>
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <h3>信号编号规则</h3>
+        <pre><code>Format: [NN]SEV [CONF] [SCORE]
+
+NN    = 序号 (01, 02, 03)
+SEV   = 严重度 (HIGH / MODERATE / LOW)
+CONF  = 置信度 (HIGH CONF / MODERATE CONF / LOW CONF)
+SCORE = 综合分数 (0.00 - 1.00)
+
+示例: 01SEV HIGH CONF 0.86</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>信号描述规范</h3>
+        <ul>
+          <li><strong>标题：</strong>一句话，包含主体、动作、地点，不使用被动语态</li>
+          <li><strong>描述：</strong>2-4 句，包含关键事实、时间线、影响范围</li>
+          <li><strong>信源行：</strong>信源数量 + 聚合可靠性评级</li>
+          <li>不包含：评论、观点、建议（这些属于 Assessment 部分）</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>评估规范</h3>
+        <ul>
+          <li>1-3 句，对三条信号做综合判断</li>
+          <li>识别跨域模式（"两条信号指向同一方向"）</li>
+          <li>定位领先指标（"Treat the mineral notice as the leading indicator"）</li>
+          <li>不提供具体行动建议（"买入/卖出/撤离"）</li>
+          <li>使用 Sherman Kent 概率语言保持一致</li>
+        </ul>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Pipeline Summary -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">从数据到输出的完整路径</h2>
+
+      <div class="pipeline mt-2">
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">1</span>
+            <span class="stage-title">2,000+ 原始信源</span>
+          </div>
+          <div class="stage-desc">AIS · 新闻 · 卫星 · 公报 · 保险 · 社交媒体</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">2</span>
+            <span class="stage-title">标准化 + 去重</span>
+          </div>
+          <div class="stage-desc">URL hash / simhash 14天窗口 → 6 条独立信源保留</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">3</span>
+            <span class="stage-title">STEMPLES+ · ACH · 评分</span>
+          </div>
+          <div class="stage-desc">维度映射 → 交叉验证 → 竞争性假设 → 严重度/置信度/可靠性评分</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">4</span>
+            <span class="stage-title">排名 → Top 3</span>
+          </div>
+          <div class="stage-desc">综合分数排序 → 取前 3 条信号</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">5</span>
+            <span class="stage-title">综合评估</span>
+          </div>
+          <div class="stage-desc">跨信号模式识别 → 领先/滞后指标定位 → 合成判断</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+        <div class="pipeline-stage" style="border-color:var(--accent-cyan);">
+          <div class="stage-header">
+            <span class="stage-number">6</span>
+            <span class="stage-title" style="color:var(--accent-cyan);">The Daily Signal</span>
+          </div>
+          <div class="stage-desc">3 Signals + 1 Assessment → 09:30 ET → 订阅者收件箱</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      The Daily Signal — Technical Documentation &nbsp;·&nbsp; 输出章节
+    </div>
+  </footer>
+</main>
+
+</body>
+</html>

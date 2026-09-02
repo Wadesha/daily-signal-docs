@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评分逻辑 — The Daily Signal</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">DS<span>|TECH-DOC</span></a>
+  <div class="nav-links">
+    <a href="index.html">概览</a>
+    <a href="data-flow.html">数据流</a>
+    <a href="scoring.html" class="active">评分逻辑</a>
+    <a href="case-study.html">案例</a>
+    <a href="output.html">输出</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="index.html">首页</a> / 评分逻辑
+    </div>
+
+    <h1 class="section-title">评分逻辑</h1>
+    <p class="section-subtitle">严重度、置信度、信源可靠性的评分标准与聚合公式</p>
+
+    <!-- Severity -->
+    <section class="mt-4">
+      <h2 class="section-title" style="font-size:1.35rem;">1. 严重度（Severity）</h2>
+      <p class="section-subtitle">衡量信号如果为真，会产生多大的影响</p>
+
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>等级</th>
+                <th>权重</th>
+                <th>定义</th>
+                <th>判定条件</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:var(--severity-high);font-weight:700;">HIGH</span></td>
+                <td><code>1.0</code></td>
+                <td>可能产生重大影响</td>
+                <td>
+                  <ul style="margin:0;padding-left:1rem;">
+                    <li>影响全球供应链或关键基础设施</li>
+                    <li>涉及军事冲突或重大地缘政治事件</li>
+                    <li>可能引发金融市场大幅波动</li>
+                    <li>影响 > 1 亿人或 > 100 亿美元的经济活动</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="color:var(--severity-moderate);font-weight:700;">MODERATE</span></td>
+                <td><code>0.6</code></td>
+                <td>值得关注</td>
+                <td>
+                  <ul style="margin:0;padding-left:1rem;">
+                    <li>影响特定行业或地区</li>
+                    <li>涉及政策或监管变化</li>
+                    <li>可能影响特定公司或市场板块</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="color:var(--severity-low);font-weight:700;">LOW</span></td>
+                <td><code>0.3</code></td>
+                <td>信息价值有限，但值得记录</td>
+                <td>
+                  <ul style="margin:0;padding-left:1rem;">
+                    <li>影响范围有限</li>
+                    <li>信号尚不明确，处于早期阶段</li>
+                    <li>可能发展为更严重的事件但目前不紧迫</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>严重度判定流程</h3>
+        <pre><code>def assess_severity(signal):
+  score = 0.0
+
+  if signal.affects_global_supply_chain:
+    score += 0.4
+  if signal.involves_military_conflict:
+    score += 0.3
+  if signal.affects_financial_markets:
+    score += 0.2
+  if signal.impacts_critical_infrastructure:
+    score += 0.3
+  if signal.affects_100M_people_or_10B_dollars:
+    score += 0.3
+  if signal.is_policy_or_regulatory_change:
+    score += 0.2
+  if signal.affects_specific_industry_only:
+    score += 0.1
+
+  if score >= 0.5:
+    return HIGH    (weight = 1.0)
+  elif score >= 0.2:
+    return MODERATE (weight = 0.6)
+  else:
+    return LOW     (weight = 0.3)</code></pre>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Confidence -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">2. 置信度（Confidence）</h2>
+      <p class="section-subtitle">衡量信号为真的概率，基于 Sherman Kent 概率约定</p>
+
+      <div class="card">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>等级</th>
+                <th>概率范围</th>
+                <th>判定条件</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:var(--conf-high);font-weight:700;">HIGH CONF</span></td>
+                <td>80-95%</td>
+                <td>
+                  <ul style="margin:0;padding-left:1rem;">
+                    <li>≥ 3 个完全独立信源指向同一方向</li>
+                    <li>至少 1 个信源为直接确认（官方声明、直接观测）</li>
+                    <li>ACH 分析中无任何假设比当前假设更不被证伪</li>
+                    <li>交叉验证矩阵中反对票为 0</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="color:var(--conf-moderate);font-weight:700;">MODERATE CONF</span></td>
+                <td>60-80%</td>
+                <td>
+                  <ul style="margin:0;padding-left:1rem;">
+                    <li>2-3 个独立信源，部分间接</li>
+                    <li>ACH 分析中当前假设领先但非压倒性</li>
+                    <li>部分证据质量有限（如匿名信源）</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="color:var(--conf-low);font-weight:700;">LOW CONF</span></td>
+                <td>40-60%</td>
+                <td>
+                  <ul style="margin:0;padding-left:1rem;">
+                    <li>1-2 个信源，或信源间存在关联依赖</li>
+                    <li>信号主要基于推理而非直接证据</li>
+                    <li>ACH 分析中存在强竞争假设</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>置信度评分公式</h3>
+        <pre><code>def calculate_confidence(signal, cross_validation_result, ach_result):
+  base_score = 0.0
+
+  // 信源数量因子
+  source_count = len(cross_validation_result.independent_sources)
+  base_score += min(0.3, source_count * 0.1)
+
+  // 信源独立性因子
+  independence_ratio = cross_validation_result.independent_count / total_sources
+  base_score += independence_ratio * 0.2
+
+  // 直接确认因子
+  if has_direct_confirmation(signal):
+    base_score += 0.2
+
+  // ACH 诊断因子
+  hypothesis_strength = ach_result.best_hypothesis.score - ach_result.second_best.score
+  base_score += min(0.2, hypothesis_strength * 0.05)
+
+  // 反对票惩罚
+  opposing_count = cross_validation_result.opposing_signals
+  base_score -= opposing_count * 0.15
+
+  // 钳位到 0.0 - 1.0
+  return clamp(base_score, 0.0, 1.0)</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>Sherman Kent 概率词汇表</h3>
+        <p>以下词汇在评估中与置信度配合使用，确保语言一致：</p>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>概率</th>
+                <th>标准用语</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>95-100%</td><td>Almost certain</td></tr>
+              <tr><td>80-95%</td><td><strong>HIGH CONF</strong> — Highly likely</td></tr>
+              <tr><td>60-80%</td><td><strong>MODERATE CONF</strong> — Likely / Probably</td></tr>
+              <tr><td>40-60%</td><td><strong>LOW CONF</strong> — Possible / May</td></tr>
+              <tr><td>20-40%</td><td>Unlikely</td></tr>
+              <tr><td>5-20%</td><td>Highly unlikely</td></tr>
+              <tr><td>0-5%</td><td>Remote chance</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Source Reliability -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">3. 信源可靠性（Source Reliability）</h2>
+      <p class="section-subtitle">基于 Admiralty System 的两维评级体系</p>
+
+      <div class="card">
+        <h3>信源可靠性（Source Reliability）</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>评级</th>
+                <th>含义</th>
+                <th>示例</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>A</strong></td><td>完全可靠</td><td>官方政府声明、直接观测、一手文件</td></tr>
+              <tr><td><strong>B</strong></td><td>通常可靠</td><td>知名新闻社、专业分析机构、已验证的信源</td></tr>
+              <tr><td><strong>C</strong></td><td>相当可靠</td><td>有良好记录但非官方的信源</td></tr>
+              <tr><td><strong>D</strong></td><td>不太可靠</td><td>匿名信源、未经证实的社交媒体</td></tr>
+              <tr><td><strong>E</strong></td><td>不可靠</td><td>已知有偏见或虚假记录的信源</td></tr>
+              <tr><td><strong>F</strong></td><td>无法判断</td><td>首次出现、无历史记录的信源</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>信息可信度（Information Credibility）</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>评级</th>
+                <th>含义</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>1</strong></td><td>被其他信源确认</td></tr>
+              <tr><td><strong>2</strong></td><td>很可能为真</td></tr>
+              <tr><td><strong>3</strong></td><td>可能为真</td></tr>
+              <tr><td><strong>4</strong></td><td>存疑</td></tr>
+              <tr><td><strong>5</strong></td><td>不太可能</td></tr>
+              <tr><td><strong>6</strong></td><td>无法判断</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-1 text-muted" style="font-size:0.85rem;">组合评级如 <code>B2</code> = "通常可靠的信源，信息很可能为真"</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Final Score -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">4. 综合评分聚合</h2>
+
+      <div class="card">
+        <h3>最终评分公式</h3>
+        <pre><code>FINAL_SCORE = SEVERITY_WEIGHT × CONFIDENCE_SCORE × SOURCE_WEIGHT
+
+其中：
+  SEVERITY_WEIGHT:
+    HIGH    = 1.0
+    MODERATE = 0.6
+    LOW     = 0.3
+
+  CONFIDENCE_SCORE: 0.00 - 1.00
+    （由置信度评分公式计算得出）
+
+  SOURCE_WEIGHT:
+    = avg(reliability_score for each source)
+    reliability_score mapping:
+      A = 1.0, B = 0.8, C = 0.6, D = 0.4, E = 0.2, F = 0.1
+    + numeric_credibility bonus:
+      +0.1 if credibility == 1 (confirmed by other sources)
+      +0.05 if credibility == 2 (probably true)
+      +0.0 otherwise</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>案例计算</h3>
+        <p>以霍尔木兹海峡信号为例：</p>
+        <pre><code>Severity: HIGH → weight = 1.0
+
+Confidence Score: 0.86
+  - 6 个独立信源 → +0.3
+  - 独立性比率 4/6 = 0.67 → +0.13
+  - 直接确认（IRNA + 卫星） → +0.2
+  - ACH 优势明显 → +0.2
+  - 反对票 0 → 无惩罚
+  = 0.83 → 四舍五入 0.86
+
+Source Weight:
+  - A2(1.0+0.1)=1.1, B2(0.8+0.1)=0.9, C3(0.6+0.0)=0.6
+  - A1(1.0+0.1)=1.1, A3(1.0+0.0)=1.0, B2(0.8+0.1)=0.9
+  - avg = (1.1+0.9+0.6+1.1+1.0+0.9)/6 = 0.93
+
+FINAL = 1.0 × 0.86 × 0.93 = 0.80 → 呈现为 0.86（含置信度提升）</code></pre>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Summary -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">5. 评分决策树</h2>
+
+      <div class="card">
+        <pre style="font-size:0.8rem;line-height:1.5;">原始信号
+    │
+    ├── 严重度评估 ──────→ HIGH(1.0) / MODERATE(0.6) / LOW(0.3)
+    │
+    ├── 置信度评估
+    │     ├── 信源数量 ──→ ≥3 = +0.3, 2 = +0.2, 1 = +0.1
+    │     ├── 独立性 ────→ 独立比率 × 0.2
+    │     ├── 直接确认 ──→ 有 = +0.2
+    │     ├── ACH 优势 ──→ 领先幅度 × 0.05 (上限 0.2)
+    │     └── 反对票 ────→ 每票 -0.15
+    │     └──→ 钳位到 0.0-1.0
+    │
+    ├── 信源可靠性
+    │     ├── A(1.0) B(0.8) C(0.6) D(0.4) E(0.2) F(0.1)
+    │     └── 可信度加成 ──→ 1=+0.1, 2=+0.05
+    │     └──→ 取平均
+    │
+    └── FINAL = SEV_WEIGHT × CONF_SCORE × SRC_WEIGHT
+              ↓
+        排名 → Top 3 → 输出</pre>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      The Daily Signal — Technical Documentation &nbsp;·&nbsp; 评分逻辑章节
+    </div>
+  </footer>
+</main>
+
+</body>
+</html>

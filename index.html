@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Daily Signal — 技术文档</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">DS<span>|TECH-DOC</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="active">概览</a>
+    <a href="data-flow.html">数据流</a>
+    <a href="scoring.html">评分逻辑</a>
+    <a href="case-study.html">案例</a>
+    <a href="output.html">输出</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="badge">TRADE  CRAFT  ·  TECHNICAL  REFERENCE</div>
+      <h1>The Daily Signal <span class="highlight">Pipeline</span></h1>
+      <p>从原始数据到结构化情报的完整技术文档 — 包含数据流架构、评分方法论、竞争性假设分析及完整案例演示。</p>
+    </section>
+
+    <!-- Overview Cards -->
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Pipeline 频率</div>
+        <div class="value mono">每日 09:30 ET</div>
+        <div class="desc">在决策者开始一天工作前送达</div>
+      </div>
+      <div class="info-item">
+        <div class="label">信源处理量</div>
+        <div class="value mono">~2,000+ / 天</div>
+        <div class="desc">数千个独立信源自动化采集</div>
+      </div>
+      <div class="info-item">
+        <div class="label">输出格式</div>
+        <div class="value mono">3 Signals + 1 Assessment</div>
+        <div class="desc">每条信号含严重度·置信度·信源可靠性</div>
+      </div>
+      <div class="info-item">
+        <div class="label">基础框架</div>
+        <div class="value mono">STEMPLES Plus²</div>
+        <div class="desc">11 维度跨域战略评估框架</div>
+      </div>
+    </div>
+
+    <!-- Pipeline Overview -->
+    <section class="mt-4">
+      <h2 class="section-title">Pipeline 架构总览</h2>
+      <p class="section-subtitle">从采集到分发的六阶段流水线</p>
+
+      <div class="pipeline">
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">1</span>
+            <span class="stage-title">Collection — 采集</span>
+          </div>
+          <div class="stage-desc">从数千个独立信源并行采集原始数据，包括海事 AIS 数据流、新闻通讯社、政府公报、卫星影像、社交媒体、保险定价数据等。</div>
+          <div class="stage-items">
+            <span class="tag">AIS</span>
+            <span class="tag">RSS</span>
+            <span class="tag">API</span>
+            <span class="tag">Scraper</span>
+            <span class="tag">Satellite</span>
+          </div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">2</span>
+            <span class="stage-title">Processing — 处理</span>
+          </div>
+          <div class="stage-desc">标准化原始数据格式，通过 URL hash 和 simhash 进行 14 天滑动窗口去重，提取元数据并分类打标签。</div>
+          <div class="stage-items">
+            <span class="tag">Normalize</span>
+            <span class="tag">Dedup</span>
+            <span class="tag">simhash</span>
+            <span class="tag">Tagging</span>
+          </div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">3</span>
+            <span class="stage-title">Analysis — 分析</span>
+          </div>
+          <div class="stage-desc">STEMPLES Plus 维度映射、交叉验证矩阵、竞争性假设分析（ACH）、严重度 &amp; 置信度评分、信源可靠性评级。</div>
+          <div class="stage-items">
+            <span class="tag">STEMPLES+</span>
+            <span class="tag">ACH</span>
+            <span class="tag">Cross-Validation</span>
+            <span class="tag">Scoring</span>
+          </div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">4</span>
+            <span class="stage-title">Ranking — 排名</span>
+          </div>
+          <div class="stage-desc">对所有信号按综合分数排序，选取 Top 3 进入最终输出。分数 = 严重度 × 置信度 × 信源加权。</div>
+          <div class="stage-items">
+            <span class="tag">Score</span>
+            <span class="tag">Rank</span>
+            <span class="tag">Top 3</span>
+          </div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">5</span>
+            <span class="stage-title">Assessment — 综合评估</span>
+          </div>
+          <div class="stage-desc">跨信号模式识别，定位领先/滞后指标，生成 actionable 的综合评估结论。</div>
+          <div class="stage-items">
+            <span class="tag">Pattern</span>
+            <span class="tag">Lead/Lag</span>
+            <span class="tag">Synthesis</span>
+          </div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">6</span>
+            <span class="stage-title">Dissemination — 分发</span>
+          </div>
+          <div class="stage-desc">格式化为 Daily Signal 标准模板，09:30 ET 通过邮件推送给订阅者。</div>
+          <div class="stage-items">
+            <span class="tag">Format</span>
+            <span class="tag">Email</span>
+            <span class="tag">09:30 ET</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Frameworks -->
+    <section class="mt-4">
+      <h2 class="section-title">核心框架</h2>
+      <p class="section-subtitle">驱动 Pipeline 的三大方法论支柱</p>
+
+      <div class="info-grid">
+        <div class="card">
+          <h3>STEMPLES Plus²</h3>
+          <p>Treadstone 71 自 2002 年部署的 11 维度战略评估框架，在经典 PESTLE 基础上扩展了 Security、Religion、Demographics、Psychology、Environmental 维度，用于全面评估对手国家力量和意图。</p>
+          <div class="mt-2">
+            <span class="badge-tag">Social</span>
+            <span class="badge-tag">Technical</span>
+            <span class="badge-tag">Economic</span>
+            <span class="badge-tag">Military</span>
+            <span class="badge-tag">Political</span>
+            <span class="badge-tag">Legal</span>
+            <span class="badge-tag">Educational</span>
+            <span class="badge-tag">Security</span>
+            <span class="badge-tag">+Religion</span>
+            <span class="badge-tag">+Demographics</span>
+            <span class="badge-tag">+Psychology</span>
+            <span class="badge-tag">+Environmental</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Structured Analytic Techniques</h3>
+          <p>美国情报界标准方法论（ICD 203 / CIA Tradecraft Primer），包含诊断技术、对抗性技术、想象性技术三大类，核心是"证伪法"而非"确认法"。</p>
+          <div class="mt-2">
+            <span class="badge-tag">ACH</span>
+            <span class="badge-tag">Key Assumptions</span>
+            <span class="badge-tag">Devil's Advocacy</span>
+            <span class="badge-tag">Red Team</span>
+            <span class="badge-tag">Indicators of Change</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Admiralty System</h3>
+          <p>信源可靠性评级体系，结合 ICD 203 置信度标准和 Sherman Kent 概率约定，为每条信号提供可量化的可信度指标。</p>
+          <div class="mt-2">
+            <span class="badge-tag">A1-A6</span>
+            <span class="badge-tag">B1-B3</span>
+            <span class="badge-tag">C1-C3</span>
+            <span class="badge-tag">D-F</span>
+            <span class="badge-tag">Sherman Kent</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="mt-4">
+      <h2 class="section-title">文档导航</h2>
+      <p class="section-subtitle">深入了解 Pipeline 的每个细节</p>
+
+      <div class="info-grid">
+        <a href="data-flow.html" style="text-decoration:none;">
+          <div class="card" style="cursor:pointer;">
+            <h3 style="color:var(--accent-cyan);">01 · 完整数据流</h3>
+            <p>从原始信源采集到最终输出的完整数据流转过程，包含每个阶段的输入/输出规范和关键决策点。</p>
+          </div>
+        </a>
+        <a href="scoring.html" style="text-decoration:none;">
+          <div class="card" style="cursor:pointer;">
+            <h3 style="color:var(--accent-cyan);">02 · 评分逻辑</h3>
+            <p>严重度、置信度、信源可靠性的评分标准、计算公式和聚合逻辑的详细说明。</p>
+          </div>
+        </a>
+        <a href="case-study.html" style="text-decoration:none;">
+          <div class="card" style="cursor:pointer;">
+            <h3 style="color:var(--accent-cyan);">03 · 完整案例</h3>
+            <p>基于霍尔木兹海峡军事活动的完整案例，展示从原始数据到最终判断的每一步推演。</p>
+          </div>
+        </a>
+        <a href="output.html" style="text-decoration:none;">
+          <div class="card" style="cursor:pointer;">
+            <h3 style="color:var(--accent-cyan);">04 · 最终输出</h3>
+            <p>Daily Signal 的完整输出格式展示，包含三条信号和综合评估。</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      The Daily Signal — Technical Documentation &nbsp;·&nbsp; 基于 Treadstone Collective 方法论分析
+    </div>
+  </footer>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>完整数据流 — The Daily Signal</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">DS<span>|TECH-DOC</span></a>
+  <div class="nav-links">
+    <a href="index.html">概览</a>
+    <a href="data-flow.html" class="active">数据流</a>
+    <a href="scoring.html">评分逻辑</a>
+    <a href="case-study.html">案例</a>
+    <a href="output.html">输出</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div class="breadcrumb">
+      <a href="index.html">首页</a> / 完整数据流
+    </div>
+
+    <h1 class="section-title">完整数据流</h1>
+    <p class="section-subtitle">从原始信源到最终推送的完整数据流转过程</p>
+
+    <!-- Stage 1: Collection -->
+    <section class="mt-4">
+      <h2 class="section-title" style="font-size:1.35rem;">阶段一：Collection — 采集</h2>
+
+      <div class="card mt-2">
+        <h3>输入</h3>
+        <p>来自数千个独立信源的原始数据流，涵盖以下类型：</p>
+
+        <div class="table-wrapper mt-2">
+          <table>
+            <thead>
+              <tr>
+                <th>信源类型</th>
+                <th>示例</th>
+                <th>采集方式</th>
+                <th>更新频率</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>AIS 航运数据</td>
+                <td>MarineTraffic, VesselFinder</td>
+                <td>API Stream</td>
+                <td>实时</td>
+              </tr>
+              <tr>
+                <td>新闻通讯社</td>
+                <td>Reuters, AP, Lloyd's List</td>
+                <td>RSS / API</td>
+                <td>实时</td>
+              </tr>
+              <tr>
+                <td>政府公报</td>
+                <td>IRNA, 美国海军, 各国部委</td>
+                <td>Web Scraper</td>
+                <td>按需</td>
+              </tr>
+              <tr>
+                <td>卫星影像</td>
+                <td>Planet Labs, Maxar</td>
+                <td>API</td>
+                <td>每日</td>
+              </tr>
+              <tr>
+                <td>金融市场数据</td>
+                <td>保险定价、运费期货</td>
+                <td>API</td>
+                <td>实时</td>
+              </tr>
+              <tr>
+                <td>内部通报</td>
+                <td>匿名泄露、安全通报</td>
+                <td>Secure Channel</td>
+                <td>按需</td>
+              </tr>
+              <tr>
+                <td>社交媒体</td>
+                <td>X/Twitter, Telegram</td>
+                <td>API</td>
+                <td>实时</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>处理逻辑</h3>
+        <pre><code>// 伪代码：并行采集引擎
+async function collectSources():
+  results = []
+  for each source in SOURCE_REGISTRY:
+    // 所有信源并行采集，单个失败不影响整体
+    result = try_async(source.fetch())
+    log_source_health(source.id, result.status)
+    if result.success:
+      results.append(result.normalize())
+  return results</code></pre>
+        <p class="mt-1 text-muted" style="font-size:0.85rem;">关键设计：单个信源故障不会导致整个 pipeline 中断，每信源的健康状态被记录用于长期监控。</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Stage 2: Processing -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">阶段二：Processing — 处理</h2>
+
+      <div class="card mt-2">
+        <h3>标准化（Normalization）</h3>
+        <p>每条原始数据被转换为统一的内部数据模型：</p>
+        <pre><code>{
+  "source_id": "A",              // 信源标识
+  "source_type": "AIS data",     // 信源类型
+  "source_reliability": "A2",    // 预置可靠性评级
+  "timestamp": "ISO 8601",       // 标准化时间戳
+  "entity": "MSC Aries",         // 主要实体
+  "event_type": "route_deviation", // 事件类型
+  "raw_text": "...",             // 原始文本
+  "location": {"lat": 26.5, "lon": 56.0}, // 地理位置
+  "dedup_hash": "sha256[:16]",   // 去重哈希
+  "simhash": "63-bit"            // 语义相似度哈希
+}</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>去重（Deduplication）</h3>
+        <p>三层去重机制，确保同一条信息不被重复计入：</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>层级</th>
+                <th>方法</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>精确去重</td>
+                <td>URL sha256[:16]</td>
+                <td>同一篇文章来自不同聚合器时命中</td>
+              </tr>
+              <tr>
+                <td>语义去重</td>
+                <td>63-bit simhash, Hamming ≤ 3</td>
+                <td>同一事件的不同表述时命中</td>
+              </tr>
+              <tr>
+                <td>时间窗口</td>
+                <td>14 天滑动窗口 SQLite</td>
+                <td>超过 14 天的旧信息不再去重（可能重新浮现）</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <pre><code>// 伪代码：去重管道
+def deduplicate(signals, seen_db, window_days=14):
+  result = []
+  for s in signals:
+    if s.url_hash in seen_db.last_14days:
+      continue  // 精确去重命中
+    if any(hamming(s.simhash, seen) <= 3 for seen in seen_db.simhash_window):
+      continue  // 语义去重命中
+    result.append(s)
+    seen_db.record(s.url_hash, s.simhash)
+  return result</code></pre>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Stage 3: Analysis -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">阶段三：Analysis — 分析</h2>
+
+      <div class="card mt-2">
+        <h3>3.1 — STEMPLES Plus 维度映射</h3>
+        <p>每条信号被映射到 11 个评估维度中的一个或多个，识别跨维度交互：</p>
+        <pre><code>// 伪代码：维度映射
+def map_dimensions(signal):
+  dimensions = []
+  if involves_military_activity(signal): dimensions.append("Military")
+  if affects_trade_or_markets(signal):   dimensions.append("Economic")
+  if has_official_statement(signal):     dimensions.append("Political")
+  if has_technical_data(signal):         dimensions.append("Technical")
+  if affects_safety(signal):             dimensions.append("Security")
+  if involves_cultural_or_religious(signal): dimensions.append("Religion")
+  if changes_demographic_conditions(signal): dimensions.append("Demographics")
+  if has_psychological_impact(signal):   dimensions.append("Psychology")
+  // ... 其余维度
+  return dimensions</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>3.2 — 交叉验证矩阵</h3>
+        <p>对核心假设进行多信源交叉验证，计算独立验证次数：</p>
+        <pre><code>// 伪代码：交叉验证
+def cross_validate(hypothesis, signals):
+  supporting = 0
+  opposing = 0
+  independent_sources = set()
+
+  for signal in signals:
+    if signal.supports(hypothesis):
+      supporting += 1
+      independent_sources.add(signal.source_id)
+    elif signal.opposes(hypothesis):
+      opposing += 1
+
+  return {
+    "supporting_signals": supporting,
+    "opposing_signals": opposing,
+    "independent_sources": len(independent_sources),
+    "verdict": "CONFIRMED" if (supporting >= 3 and opposing == 0) else "PARTIAL" if (supporting > opposing) else "REJECTED"
+  }</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>3.3 — 竞争性假设分析（ACH）</h3>
+        <p>列出所有可能的解释，对每个证据评估它对每个假设的"一致性程度"：</p>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>证据 / 假设</th>
+                <th>H1: 未公开演习</th>
+                <th>H2: 天气改道</th>
+                <th>H3: 美军行动</th>
+                <th>H4: 数据误报</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>AIS 商船改道</td>
+                <td style="color:var(--accent-green);">CC</td>
+                <td style="color:var(--accent-yellow);">C</td>
+                <td style="color:var(--text-muted);">N</td>
+                <td style="color:var(--accent-red);">II</td>
+              </tr>
+              <tr>
+                <td>保险费率翻倍</td>
+                <td style="color:var(--accent-green);">CC</td>
+                <td style="color:var(--accent-red);">I</td>
+                <td style="color:var(--accent-yellow);">C</td>
+                <td style="color:var(--accent-red);">II</td>
+              </tr>
+              <tr>
+                <td>运营商内部通报</td>
+                <td style="color:var(--accent-green);">CC</td>
+                <td style="color:var(--accent-yellow);">C</td>
+                <td style="color:var(--text-muted);">N</td>
+                <td style="color:var(--accent-red);">II</td>
+              </tr>
+              <tr>
+                <td>航母行程推迟</td>
+                <td style="color:var(--accent-green);">C</td>
+                <td style="color:var(--accent-red);">I</td>
+                <td style="color:var(--accent-green);">CC</td>
+                <td style="color:var(--accent-red);">II</td>
+              </tr>
+              <tr>
+                <td>伊朗官方宣布演习</td>
+                <td style="color:var(--accent-green);">CC</td>
+                <td style="color:var(--text-muted);">N</td>
+                <td style="color:var(--accent-red);">I</td>
+                <td style="color:var(--accent-red);">II</td>
+              </tr>
+              <tr>
+                <td>卫星影像 7 艘军舰</td>
+                <td style="color:var(--accent-green);">CC</td>
+                <td style="color:var(--accent-red);">II</td>
+                <td style="color:var(--accent-yellow);">C</td>
+                <td style="color:var(--accent-red);">II</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mt-1 text-muted" style="font-size:0.85rem;">评级标准：CC=强烈支持 · C=支持 · N=中立 · I=不一致 · II=强烈不一致</p>
+
+        <p class="mt-2"><strong>ACH 诊断结论：</strong> H1（未公开演习）在所有假设中"最不被证伪"——没有任何证据强烈反对它，且有最多的 CC 评级。H2 和 H4 因被 II 评级多次命中而排除。</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Stage 4: Ranking -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">阶段四：Ranking — 排名</h2>
+
+      <div class="card mt-2">
+        <h3>综合评分公式</h3>
+        <pre><code>Score = Severity_Weight × Confidence_Score × Source_Weight
+
+其中：
+  Severity_Weight:
+    HIGH    = 1.0
+    MODERATE = 0.6
+    LOW     = 0.3
+
+  Confidence_Score: 0.00 - 1.00
+    基于信源数量、独立性、ACH 诊断结果
+
+  Source_Weight:
+    聚合信源可靠性的加权平均 (A1=1.0 → F6=0.1)</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>当日排名示例</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>排名</th>
+                <th>信号摘要</th>
+                <th>严重度</th>
+                <th>置信度</th>
+                <th>分数</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>#1</strong></td>
+                <td>霍尔木兹海峡军事活动</td>
+                <td><span style="color:var(--severity-high);">HIGH</span></td>
+                <td><span style="color:var(--conf-high);">HIGH</span></td>
+                <td><strong>0.86</strong></td>
+              </tr>
+              <tr>
+                <td>#2</td>
+                <td>关键矿产出口许可证收紧</td>
+                <td><span style="color:var(--severity-moderate);">MODERATE</span></td>
+                <td><span style="color:var(--severity-moderate);">MODERATE</span></td>
+                <td>0.71</td>
+              </tr>
+              <tr>
+                <td>#3</td>
+                <td>央行措辞暗示政策转向</td>
+                <td><span style="color:var(--severity-low);">LOW</span></td>
+                <td><span style="color:var(--severity-low);">LOW</span></td>
+                <td>0.64</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text-muted);">4</td>
+                <td style="color:var(--text-muted);">某科技公司收购传闻</td>
+                <td style="color:var(--text-muted);">LOW</td>
+                <td style="color:var(--text-muted);">LOW</td>
+                <td style="color:var(--text-muted);">0.55</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text-muted);">5</td>
+                <td style="color:var(--text-muted);">极端天气影响农产品</td>
+                <td style="color:var(--text-muted);">LOW</td>
+                <td style="color:var(--text-muted);">LOW</td>
+                <td style="color:var(--text-muted);">0.48</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-1 text-muted" style="font-size:0.85rem;">Top 3 被选中进入最终输出，其余信号归档但不推送。</p>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Stage 5: Assessment -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">阶段五：Assessment — 综合评估</h2>
+
+      <div class="card mt-2">
+        <h3>跨信号模式识别</h3>
+        <p>对 Top 3 信号进行关联分析，寻找共同的底层驱动因素：</p>
+        <pre><code>// 伪代码：模式识别
+def synthesize_signals(signals):
+  patterns = []
+  for each pair in combinations(signals, 2):
+    if share_common_dimension(pair):
+      patterns.record({
+        "signal_a": pair[0].id,
+        "signal_b": pair[1].id,
+        "shared_dimension": find_common_dimension(pair),
+        "relationship": determine_relationship(pair)
+        // 领先(leading)、滞后(lagging)、因果(causal)、巧合(coincidental)
+      })
+  return generate_assessment(patterns)</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>领先/滞后指标定位</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>信号</th>
+                <th>角色</th>
+                <th>理由</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#2 矿产出口收紧</td>
+                <td><strong style="color:var(--accent-cyan);">领先指标</strong></td>
+                <td>有公开发布的书面记录，可追踪确认；下游企业已开始定价</td>
+              </tr>
+              <tr>
+                <td>#1 军事活动</td>
+                <td><strong style="color:var(--accent-yellow);">正在发生</strong></td>
+                <td>事件正在进行中，但结果不确定</td>
+              </tr>
+              <tr>
+                <td>#3 央行政策</td>
+                <td><strong style="color:var(--accent-purple);">潜在结果</strong></td>
+                <td>前两者的可能宏观经济后果</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Stage 6: Dissemination -->
+    <section>
+      <h2 class="section-title" style="font-size:1.35rem;">阶段六：Dissemination — 分发</h2>
+
+      <div class="card mt-2">
+        <h3>输出格式规范</h3>
+        <pre><code>Subject: The Daily Signal — 2026-09-02
+Send at: 09:30 ET (13:30 UTC)
+Channel: Email (Subscriber List)
+
+Body Template:
+┌─────────────────────────────────────────┐
+│  The Daily Signal                       │
+│  0930 ET · YYYY-MM-DD                   │
+│                                         │
+│  1. [NN]SEV [CONF] [SCORE]            │
+│  [Title]                                │
+│  [Description]                          │
+│  [N] sources · Reliability [RATING]     │
+│                                         │
+│  2. [NN]SEV [CONF] [SCORE]            │
+│  ...                                    │
+│                                         │
+│  3. [NN]SEV [CONF] [SCORE]            │
+│  ...                                    │
+│                                         │
+│  Assessment                             │
+│  [Synthesis paragraph]                  │
+└─────────────────────────────────────────┘</code></pre>
+      </div>
+
+      <div class="card">
+        <h3>推送机制</h3>
+        <ul>
+          <li>定时任务：每日 09:30 ET 精确触发</li>
+          <li>邮件通过专用发送服务推送，支持退订</li>
+          <li>免费订阅者获得完整内容，不区分付费层级</li>
+          <li>所有推送附带隐私政策链接</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Full Flow Diagram -->
+    <section class="mt-4">
+      <h2 class="section-title">完整数据流图</h2>
+
+      <div class="pipeline">
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">1</span>
+            <span class="stage-title">Collection — 采集</span>
+          </div>
+          <div class="stage-desc"><strong>输入：</strong>2,000+ 原始信源 / 天（AIS · 新闻 · 卫星 · 公报 · 保险 · 社交媒体）</div>
+          <div class="stage-desc"><strong>输出：</strong>标准化原始记录列表</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">2</span>
+            <span class="stage-title">Processing — 处理</span>
+          </div>
+          <div class="stage-desc"><strong>动作：</strong>标准化格式 · URL hash 去重 · simhash 语义去重 · 14 天窗口</div>
+          <div class="stage-desc"><strong>输出：</strong>去重后的结构化信号池</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">3</span>
+            <span class="stage-title">Analysis — 分析</span>
+          </div>
+          <div class="stage-desc"><strong>动作：</strong>STEMPLES+ 维度映射 → 交叉验证矩阵 → ACH 竞争性假设分析 → 评分</div>
+          <div class="stage-desc"><strong>输出：</strong>带评分和诊断标签的信号集</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">4</span>
+            <span class="stage-title">Ranking — 排名</span>
+          </div>
+          <div class="stage-desc"><strong>动作：</strong>按综合分数降序排列，取 Top 3</div>
+          <div class="stage-desc"><strong>输出：</strong>3 条最高分信号</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">5</span>
+            <span class="stage-title">Assessment — 综合评估</span>
+          </div>
+          <div class="stage-desc"><strong>动作：</strong>跨信号模式识别 · 领先/滞后指标定位 · 合成判断</div>
+          <div class="stage-desc"><strong>输出：</strong>1 份综合评估段落</div>
+        </div>
+        <div class="pipeline-arrow">▼</div>
+
+        <div class="pipeline-stage">
+          <div class="stage-header">
+            <span class="stage-number">6</span>
+            <span class="stage-title">Dissemination — 分发</span>
+          </div>
+          <div class="stage-desc"><strong>动作：</strong>格式化模板 · 09:30 ET 邮件推送</div>
+          <div class="stage-desc"><strong>输出：</strong>订阅者收件箱中的 Daily Signal</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <div class="container">
+      The Daily Signal — Technical Documentation &nbsp;·&nbsp; 数据流章节
+    </div>
+  </footer>
+</main>
+
+</body>
+</html>
