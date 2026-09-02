@@ -7,241 +7,438 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       Landing Page — Treadstone Collective Style
+       ============================================ */
+
+    body.landing {
+      background: #0a0c10;
+    }
+
+    .landing-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+
+    /* Badge */
+    .lp-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      border: 1px solid #1e293b;
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+    }
+
+    /* Title */
+    .lp-title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+      color: #f1f5f9;
+    }
+
+    .lp-title .highlight {
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Tagline */
+    .lp-tagline {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #94a3b8;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    /* Description */
+    .lp-desc {
+      color: #64748b;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+
+    .lp-desc strong {
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    /* CTA / Docs Nav */
+    .lp-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .lp-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: var(--font-mono);
+    }
+
+    .lp-cta.primary {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    .lp-cta.primary:hover {
+      background: #2563eb;
+    }
+
+    .lp-cta.secondary {
+      background: #1a2330;
+      color: #94a3b8;
+      border: 1px solid #2a3548;
+    }
+
+    .lp-cta.secondary:hover {
+      border-color: #3b82f6;
+      color: #e2e8f0;
+    }
+
+    .lp-cta .arrow {
+      font-size: 0.75rem;
+      font-family: sans-serif;
+    }
+
+    /* Section Label */
+    .lp-section-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Sample Format */
+    .lp-sample-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .lp-sample-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .lp-sample-header .meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #475569;
+    }
+
+    .lp-sample-desc {
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Signal */
+    .lp-signal {
+      padding: 1.5rem 0;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .lp-signal:last-of-type {
+      border-bottom: none;
+    }
+
+    .lp-signal .signal-line {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #475569;
+      margin-bottom: 0.4rem;
+    }
+
+    .lp-signal .signal-line .sev-high {
+      color: #ef4444;
+    }
+
+    .lp-signal .signal-line .sev-mod {
+      color: #f59e0b;
+    }
+
+    .lp-signal .signal-line .sev-low {
+      color: #64748b;
+    }
+
+    .lp-signal .signal-line .conf-high {
+      color: #10b981;
+    }
+
+    .lp-signal .signal-line .conf-mod {
+      color: #f59e0b;
+    }
+
+    .lp-signal .signal-line .conf-low {
+      color: #ef4444;
+    }
+
+    .lp-signal h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      line-height: 1.4;
+      margin-bottom: 0.4rem;
+    }
+
+    .lp-signal p {
+      font-size: 0.85rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    .lp-signal .signal-footer {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 0.4rem;
+    }
+
+    .lp-signal .signal-footer .sep {
+      margin: 0 0.5rem;
+    }
+
+    /* Assessment */
+    .lp-assessment {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border-left: 2px solid #06b6d4;
+      background: rgba(6, 182, 212, 0.03);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .lp-assessment .label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #06b6d4;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .lp-assessment p {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      line-height: 1.7;
+    }
+
+    /* Sample note */
+    .lp-sample-note {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: #475569;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #1e293b;
+    }
+
+    /* Footer */
+    .lp-footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid #1e293b;
+      line-height: 1.6;
+    }
+
+    .lp-footer a {
+      color: #06b6d4;
+      text-decoration: none;
+    }
+
+    .lp-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .landing-page { padding: 2rem 1rem 3rem; }
+      .lp-title { font-size: 1.75rem; }
+      .lp-tagline { font-size: 1rem; }
+      .lp-cta-row { flex-direction: column; }
+      .lp-cta { width: 100%; justify-content: center; }
+    }
+
+    /* ============================================
+       Split Layout: Docs Header + Landing
+       ============================================ */
+
+    .lp-header {
+      text-align: center;
+      padding: 1.5rem 0 0.5rem;
+    }
+
+    .lp-header .logo-link {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #06b6d4;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    .lp-header .logo-link span {
+      color: #475569;
+      font-weight: 400;
+    }
+
+    .lp-header .nav-links {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .lp-header .nav-links a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .lp-header .nav-links a:hover {
+      color: #e2e8f0;
+      background: rgba(59, 130, 246, 0.1);
+    }
+  </style>
 </head>
-<body>
+<body class="landing">
 
-<nav>
-  <a href="index.html" class="logo">DS<span>|TECH-DOC</span></a>
-  <div class="nav-links">
-    <a href="index.html" class="active">概览</a>
-    <a href="data-flow.html">数据流</a>
-    <a href="scoring.html">评分逻辑</a>
-    <a href="case-study.html">案例</a>
-    <a href="output.html">输出</a>
-  </div>
-</nav>
+  <div class="landing-page">
 
-<main>
-  <div class="container">
-
-    <!-- Hero -->
-    <section class="hero">
-      <div class="badge">TRADE  CRAFT  ·  TECHNICAL  REFERENCE</div>
-      <h1>The Daily Signal <span class="highlight">Pipeline</span></h1>
-      <p>从原始数据到结构化情报的完整技术文档 — 包含数据流架构、评分方法论、竞争性假设分析及完整案例演示。</p>
-    </section>
-
-    <!-- Overview Cards -->
-    <div class="info-grid">
-      <div class="info-item">
-        <div class="label">Pipeline 频率</div>
-        <div class="value mono">每日 09:30 ET</div>
-        <div class="desc">在决策者开始一天工作前送达</div>
-      </div>
-      <div class="info-item">
-        <div class="label">信源处理量</div>
-        <div class="value mono">~2,000+ / 天</div>
-        <div class="desc">数千个独立信源自动化采集</div>
-      </div>
-      <div class="info-item">
-        <div class="label">输出格式</div>
-        <div class="value mono">3 Signals + 1 Assessment</div>
-        <div class="desc">每条信号含严重度·置信度·信源可靠性</div>
-      </div>
-      <div class="info-item">
-        <div class="label">基础框架</div>
-        <div class="value mono">STEMPLES Plus²</div>
-        <div class="desc">11 维度跨域战略评估框架</div>
+    <!-- Header -->
+    <div class="lp-header">
+      <a href="index.html" class="logo-link">DS<span>|TECH-DOC</span></a>
+      <div class="nav-links">
+        <a href="data-flow.html">数据流</a>
+        <a href="scoring.html">评分逻辑</a>
+        <a href="case-study.html">完整案例</a>
+        <a href="output.html">最终输出</a>
       </div>
     </div>
 
-    <!-- Pipeline Overview -->
-    <section class="mt-4">
-      <h2 class="section-title">Pipeline 架构总览</h2>
-      <p class="section-subtitle">从采集到分发的六阶段流水线</p>
+    <!-- Badge -->
+    <div class="lp-badge">FREE DAILY DISPATCH</div>
 
-      <div class="pipeline">
-        <div class="pipeline-stage">
-          <div class="stage-header">
-            <span class="stage-number">1</span>
-            <span class="stage-title">Collection — 采集</span>
-          </div>
-          <div class="stage-desc">从数千个独立信源并行采集原始数据，包括海事 AIS 数据流、新闻通讯社、政府公报、卫星影像、社交媒体、保险定价数据等。</div>
-          <div class="stage-items">
-            <span class="tag">AIS</span>
-            <span class="tag">RSS</span>
-            <span class="tag">API</span>
-            <span class="tag">Scraper</span>
-            <span class="tag">Satellite</span>
-          </div>
-        </div>
-        <div class="pipeline-arrow">▼</div>
+    <!-- Title -->
+    <h1 class="lp-title">THE DAILY <span class="highlight">SIGNAL</span></h1>
 
-        <div class="pipeline-stage">
-          <div class="stage-header">
-            <span class="stage-number">2</span>
-            <span class="stage-title">Processing — 处理</span>
-          </div>
-          <div class="stage-desc">标准化原始数据格式，通过 URL hash 和 simhash 进行 14 天滑动窗口去重，提取元数据并分类打标签。</div>
-          <div class="stage-items">
-            <span class="tag">Normalize</span>
-            <span class="tag">Dedup</span>
-            <span class="tag">simhash</span>
-            <span class="tag">Tagging</span>
-          </div>
-        </div>
-        <div class="pipeline-arrow">▼</div>
+    <!-- Tagline -->
+    <p class="lp-tagline">3 signals. 1 assessment. Every morning at 09:30 ET. Free.</p>
 
-        <div class="pipeline-stage">
-          <div class="stage-header">
-            <span class="stage-number">3</span>
-            <span class="stage-title">Analysis — 分析</span>
-          </div>
-          <div class="stage-desc">STEMPLES Plus 维度映射、交叉验证矩阵、竞争性假设分析（ACH）、严重度 &amp; 置信度评分、信源可靠性评级。</div>
-          <div class="stage-items">
-            <span class="tag">STEMPLES+</span>
-            <span class="tag">ACH</span>
-            <span class="tag">Cross-Validation</span>
-            <span class="tag">Scoring</span>
-          </div>
-        </div>
-        <div class="pipeline-arrow">▼</div>
+    <!-- Description -->
+    <p class="lp-desc">
+      The pipeline reads several thousand sources a day, corroborates what it finds against itself, and grades the result. Subscribers get the whole of it. <strong>The Daily Signal</strong> is the top of it — the three things that moved, and what we make of them.
+    </p>
+    <p class="lp-desc">
+      No commentary, no roundup, no links to five versions of the same wire story. Every item carries its severity, its confidence, and the number of independent sources standing behind it. If the pipeline is not confident, the item says so.
+    </p>
 
-        <div class="pipeline-stage">
-          <div class="stage-header">
-            <span class="stage-number">4</span>
-            <span class="stage-title">Ranking — 排名</span>
-          </div>
-          <div class="stage-desc">对所有信号按综合分数排序，选取 Top 3 进入最终输出。分数 = 严重度 × 置信度 × 信源加权。</div>
-          <div class="stage-items">
-            <span class="tag">Score</span>
-            <span class="tag">Rank</span>
-            <span class="tag">Top 3</span>
-          </div>
-        </div>
-        <div class="pipeline-arrow">▼</div>
+    <!-- CTA / Docs Navigation -->
+    <div class="lp-cta-row">
+      <a href="data-flow.html" class="lp-cta primary">
+        <span>探索 Pipeline ›</span>
+      </a>
+      <a href="scoring.html" class="lp-cta secondary">评分逻辑</a>
+      <a href="case-study.html" class="lp-cta secondary">完整案例</a>
+      <a href="output.html" class="lp-cta secondary">输出格式</a>
+    </div>
 
-        <div class="pipeline-stage">
-          <div class="stage-header">
-            <span class="stage-number">5</span>
-            <span class="stage-title">Assessment — 综合评估</span>
-          </div>
-          <div class="stage-desc">跨信号模式识别，定位领先/滞后指标，生成 actionable 的综合评估结论。</div>
-          <div class="stage-items">
-            <span class="tag">Pattern</span>
-            <span class="tag">Lead/Lag</span>
-            <span class="tag">Synthesis</span>
-          </div>
-        </div>
-        <div class="pipeline-arrow">▼</div>
+    <!-- Sample Format -->
+    <div class="lp-section-label">// SAMPLE FORMAT</div>
 
-        <div class="pipeline-stage">
-          <div class="stage-header">
-            <span class="stage-number">6</span>
-            <span class="stage-title">Dissemination — 分发</span>
-          </div>
-          <div class="stage-desc">格式化为 Daily Signal 标准模板，09:30 ET 通过邮件推送给订阅者。</div>
-          <div class="stage-items">
-            <span class="tag">Format</span>
-            <span class="tag">Email</span>
-            <span class="tag">09:30 ET</span>
-          </div>
-        </div>
+    <h2 class="lp-title" style="font-size:1.35rem;margin-bottom:0.25rem;">What lands at 09:30.</h2>
+
+    <div class="lp-sample-header">
+      <h3>The Daily Signal</h3>
+      <span class="meta">0930 ET · Daily</span>
+    </div>
+
+    <!-- Signal 1 -->
+    <div class="lp-signal">
+      <div class="signal-line">
+        <span class="sev-high">01SEV HIGH</span><span class="conf-high">CONF</span> 0.86
       </div>
-    </section>
+      <h4>Naval activity concentrates along a contested transit corridor</h4>
+      <p>Three independent shipping trackers show a sustained deviation in commercial routing over 36 hours, consistent with an unannounced exercise closure.</p>
+      <div class="signal-footer">6 sources <span class="sep">·</span> Reliability B2</div>
+    </div>
 
-    <!-- Core Frameworks -->
-    <section class="mt-4">
-      <h2 class="section-title">核心框架</h2>
-      <p class="section-subtitle">驱动 Pipeline 的三大方法论支柱</p>
-
-      <div class="info-grid">
-        <div class="card">
-          <h3>STEMPLES Plus²</h3>
-          <p>Treadstone 71 自 2002 年部署的 11 维度战略评估框架，在经典 PESTLE 基础上扩展了 Security、Religion、Demographics、Psychology、Environmental 维度，用于全面评估对手国家力量和意图。</p>
-          <div class="mt-2">
-            <span class="badge-tag">Social</span>
-            <span class="badge-tag">Technical</span>
-            <span class="badge-tag">Economic</span>
-            <span class="badge-tag">Military</span>
-            <span class="badge-tag">Political</span>
-            <span class="badge-tag">Legal</span>
-            <span class="badge-tag">Educational</span>
-            <span class="badge-tag">Security</span>
-            <span class="badge-tag">+Religion</span>
-            <span class="badge-tag">+Demographics</span>
-            <span class="badge-tag">+Psychology</span>
-            <span class="badge-tag">+Environmental</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Structured Analytic Techniques</h3>
-          <p>美国情报界标准方法论（ICD 203 / CIA Tradecraft Primer），包含诊断技术、对抗性技术、想象性技术三大类，核心是"证伪法"而非"确认法"。</p>
-          <div class="mt-2">
-            <span class="badge-tag">ACH</span>
-            <span class="badge-tag">Key Assumptions</span>
-            <span class="badge-tag">Devil's Advocacy</span>
-            <span class="badge-tag">Red Team</span>
-            <span class="badge-tag">Indicators of Change</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Admiralty System</h3>
-          <p>信源可靠性评级体系，结合 ICD 203 置信度标准和 Sherman Kent 概率约定，为每条信号提供可量化的可信度指标。</p>
-          <div class="mt-2">
-            <span class="badge-tag">A1-A6</span>
-            <span class="badge-tag">B1-B3</span>
-            <span class="badge-tag">C1-C3</span>
-            <span class="badge-tag">D-F</span>
-            <span class="badge-tag">Sherman Kent</span>
-          </div>
-        </div>
+    <!-- Signal 2 -->
+    <div class="lp-signal">
+      <div class="signal-line">
+        <span class="sev-mod">02SEV MODERATE</span><span class="conf-mod">CONF</span> 0.71
       </div>
-    </section>
+      <h4>Export-licensing regime tightened on a critical mineral class</h4>
+      <p>Ministry notice published without the customary consultation window. Two downstream manufacturers have already flagged supply exposure in filings.</p>
+      <div class="signal-footer">4 sources <span class="sep">·</span> Reliability B3</div>
+    </div>
 
-    <!-- Quick Links -->
-    <section class="mt-4">
-      <h2 class="section-title">文档导航</h2>
-      <p class="section-subtitle">深入了解 Pipeline 的每个细节</p>
-
-      <div class="info-grid">
-        <a href="data-flow.html" style="text-decoration:none;">
-          <div class="card" style="cursor:pointer;">
-            <h3 style="color:var(--accent-cyan);">01 · 完整数据流</h3>
-            <p>从原始信源采集到最终输出的完整数据流转过程，包含每个阶段的输入/输出规范和关键决策点。</p>
-          </div>
-        </a>
-        <a href="scoring.html" style="text-decoration:none;">
-          <div class="card" style="cursor:pointer;">
-            <h3 style="color:var(--accent-cyan);">02 · 评分逻辑</h3>
-            <p>严重度、置信度、信源可靠性的评分标准、计算公式和聚合逻辑的详细说明。</p>
-          </div>
-        </a>
-        <a href="case-study.html" style="text-decoration:none;">
-          <div class="card" style="cursor:pointer;">
-            <h3 style="color:var(--accent-cyan);">03 · 完整案例</h3>
-            <p>基于霍尔木兹海峡军事活动的完整案例，展示从原始数据到最终判断的每一步推演。</p>
-          </div>
-        </a>
-        <a href="output.html" style="text-decoration:none;">
-          <div class="card" style="cursor:pointer;">
-            <h3 style="color:var(--accent-cyan);">04 · 最终输出</h3>
-            <p>Daily Signal 的完整输出格式展示，包含三条信号和综合评估。</p>
-          </div>
-        </a>
+    <!-- Signal 3 -->
+    <div class="lp-signal">
+      <div class="signal-line">
+        <span class="sev-low">03SEV LOW</span><span class="conf-low">CONF</span> 0.64
       </div>
-    </section>
+      <h4>Central bank signals an earlier policy move than guided</h4>
+      <p>Language shift across two speeches in one week. Rate futures have repriced; no official revision to the published schedule yet.</p>
+      <div class="signal-footer">5 sources <span class="sep">·</span> Reliability A2</div>
+    </div>
+
+    <!-- Assessment -->
+    <div class="lp-assessment">
+      <div class="label">Assessment</div>
+      <p>Two of this morning's three items point the same direction: supply routes and supply inputs are both being managed politically rather than commercially. Treat the mineral notice as the leading indicator — it is the one with a published paper trail, and the one downstream firms have already priced.</p>
+    </div>
+
+    <div class="lp-sample-note">Sample to represent format only — not real intelligence.</div>
+
+    <!-- Footer -->
+    <div class="lp-footer">
+      <a href="https://github.com/Wadesha/daily-signal-docs">GitHub</a>
+      <span style="margin:0 0.5rem;">·</span>
+      <a href="https://www.treadstonecollective.com/daily-signal">Treadstone Collective</a>
+      <br>
+      The Daily Signal — Technical Documentation
+    </div>
 
   </div>
-
-  <footer>
-    <div class="container">
-      The Daily Signal — Technical Documentation &nbsp;·&nbsp; 基于 Treadstone Collective 方法论分析
-    </div>
-  </footer>
-</main>
 
 </body>
 </html>
